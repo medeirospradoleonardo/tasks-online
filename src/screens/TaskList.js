@@ -68,18 +68,16 @@ export default class TaskList extends Component {
         }))
     }
 
-    toggleTask = taskId => {
-        const tasks = [...this.state.tasks]
-        tasks.forEach(task => {
-            if (task.id === taskId) {
-                task.doneAt = task.doneAt ? null : new Date()
-            }
-        })
-
-        this.setState({ tasks: tasks }, this.filterTasks)
+    toggleTask = async taskId => {
+        try {
+            await axios.put(`${server}/tasks/${taskId}/toggle`)
+            this.loadTasks()
+        } catch (e) {
+            showError(e)
+        }
     }
 
-    addTask = newTask => {
+    addTask = async newTask => {
 
         // Isso ocorre se submeter se a descrição passado for nula, vazia ou com espaços em branco
         if (!newTask.desc || !newTask.desc.trim()) {
@@ -87,21 +85,26 @@ export default class TaskList extends Component {
             return
         }
 
-        const tasks = [...this.state.tasks]
-        tasks.push({
-            id: Math.random(),
-            desc: newTask.desc,
-            estimateAt: newTask.date,
-            doneAt: null
-        })
+        try {
+            await axios.post(`${server}/tasks`, {
+                desc: newTask.desc,
+                estimateAt: newTask.date
+            })
 
-        this.setState({ tasks: tasks, showAddTask: false }, this.filterTasks)
+            this.setState({ showAddTask: false }, this.loadTasks)
+        } catch (e) {
+            showError(e)
+        }
+
     }
 
-    deleteTask = id => {
-        // Filtrando o array tasks para tirar o elemento com o id escolhido
-        const tasks = this.state.tasks.filter(task => task.id !== id)
-        this.setState({ tasks: tasks }, this.filterTasks)
+    deleteTask = async taskId => {
+        try {
+            await axios.delete(`${server}/tasks/${taskId}`)
+            this.loadTasks()
+        } catch (e) {
+            showError(e)
+        }
     }
 
     render() {
