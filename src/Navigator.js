@@ -49,6 +49,7 @@ const AuthNavigator = () => {
         <Stack.Navigator screenOptions={{ headerShown: false }}>
             {/* <Stack.Screen name="AuthOrApp" component={AuthOrApp} /> */}
             <Stack.Screen name="Auth" component={Auth} />
+            <Stack.Screen name="Home" component={TaskList} />
             {/* <Stack.Screen name="Home" component={DrawerNavigator} /> */}
         </Stack.Navigator>
     );
